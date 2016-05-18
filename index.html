@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript Object Viewer</title>
+</head>
+<body>
+    <h1>JS Object Viewer</h1>
+    <script src="scripts.js"></script>
+    <script>
+        var myObj = {
+            myProp1: 'I am property 1',
+            myProp2: 'I am property 2',
+            myFunc1: function () {
+                return true;
+            }
+        };
+        
+        var myObjViewer = OV({
+            obj: myObj,
+            config: {
+                display: {
+                    levels: true,
+                    ownPropertiesOnly: false
+                }
+            }
+        });
+        
+        console.log(myObjViewer.getParsedObject());
+    </script>
+</body>
+</html>
