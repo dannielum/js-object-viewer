@@ -27,6 +27,23 @@
         });
         
         console.log(myObjViewer.getParsedObject());
+        
+        var animal = { eats: true } 
+        function Rabbit(name) { this.name = name } 
+        Rabbit.prototype = animal;
+        var rabbit = new Rabbit('John');
+        
+        var myObjViewer2 = OV({
+            obj: rabbit,
+            config: {
+                display: {
+                    levels: true,
+                    ownPropertiesOnly: false
+                }
+            }
+        });
+        
+        console.log(myObjViewer2.getParsedObject());
     </script>
 </body>
 </html>

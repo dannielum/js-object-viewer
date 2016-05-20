@@ -1,10 +1,14 @@
 (function JSObjViewer(global) {
+    'use strict';
 
     var JSObjViewer = function (options) {
         return new JSObjViewer.init(options);
     };
 
     JSObjViewer.prototype = {
+        count: 0,
+        
+        // dictionary list of parsed objects
         objectList: {},
         
         // JSObjViewer plugins
@@ -42,43 +46,59 @@
 
         // JSObjViewer's methods
         getParsedObject: function () {
-            return this.objectList = this.parse(this.obj, 'root');
+            return this.objectList = this.parse(this.obj);
         },
         
         render: function () {
             // TODO: render
         },
         
-        parse: function (obj, name) {
+        parse: function (obj) {
             if (!obj && typeof obj !== 'object') {
                 return null;
             }
             
-            var parsedObj = {
-                name: name,
-                properties: [],
-                inherit: null
-            };
+            var name = this.getObjectName(obj);
+            var parsedObj = Object.create(null, {
+                name: {
+                    value: name
+                },
+                properties: {
+                    value: []
+                },
+                inherit: {
+                    value: null,
+                    writable: true
+                }
+            });
             
             for (var attr in obj) {
-                var prop = parsedProp = {
-                    name: null,
-                    type: null,
-                    value: null
-                };
                 if (obj.hasOwnProperty(attr)) {
-                    prop.name = attr;
-                    prop.value = obj[attr];
-                    prop.type = typeof obj[attr];
+                    parsedObj.properties.push(Object.create(null, {
+                        name: {
+                            value: attr
+                        },
+                        type: {
+                            value: typeof obj[attr]
+                        },
+                        value: {
+                            value: obj[attr]
+                        }
+                    }));
                 }
-                parsedObj.properties.push(prop);
             }
             
             if (obj.__proto__) {
-                parsedObj.inherit = this.parse(obj.__proto__, 'Child of ' + name);
+                parsedObj.inherit = this.parse(obj.__proto__);
             }
             
-            return parsedObj;
+            return parsedObj.inherit === null && parsedObj.properties.length === 0 ? null : parsedObj;
+        },
+        getObjectName: function (obj) {
+            var stringified = obj.toString();
+            stringified = stringified.substr('function '.length);
+            stringified = stringified.substr(0, stringified.indexOf('('));
+            return (stringified || obj.constructor.name)  + ' (' + (++this.count) + ')';
         }
     };
 
